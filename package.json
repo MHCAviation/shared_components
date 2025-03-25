@@ -1,0 +1,23 @@
+{
+  "name": "share-components",
+  "version": "1.0.0",
+  "description": "A shared job filter component for Next.js projects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1 || ^19.0.0",
+    "next": "^14.0.0 || ^15.2.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5"
+  },
+  "license": "MIT"
+}
