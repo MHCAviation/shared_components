@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npx postcss src/styles.css -o dist/styles.css",
     "prepare": "npm run build"
   },
   "peerDependencies": {
@@ -21,6 +21,8 @@
     "@types/react": "^19",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.0.16",
     "typescript": "^5"
   },
   "license": "proprietary",
