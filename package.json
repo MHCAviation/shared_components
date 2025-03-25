@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build"
+    "build:css": "npx tailwind -i ./src/styles/tailwind.css -o ./dist/main.css",
+    "prepare": "npm run build",
+    "postinstall": "npx tailwind -i ./src/styles/tailwind.css -o ./dist/min.css"
   },
   "peerDependencies": {
     "next": "^14.0.0 || ^15.2.2",
