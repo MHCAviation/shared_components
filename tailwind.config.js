@@ -1,22 +1,12 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
-  content: ["./src/components/*.{js,ts,jsx,tsx,mdx}"],
-  theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        "brand-navy": "#020d81",
-        "brand-medium-blue": "#2876fc",
-        "brand-blue": "#6EC1E4",
-        lineClamp: {
-          3: "3",
-        },
-      },
-    },
-  },
-  plugins: [],
-  content: [],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "../shared_components/src/**/*.{js,ts,jsx,tsx}",
+    // or if installed via npm (in node_modules)
+    "./node_modules/shared_components/dist/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {},
   },

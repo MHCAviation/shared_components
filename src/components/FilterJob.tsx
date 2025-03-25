@@ -1,6 +1,5 @@
 "use client";
 
-import "../styles/globals.css";
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { Job } from "../utils/types";
