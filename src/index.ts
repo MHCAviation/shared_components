@@ -1,5 +1,3 @@
-import "./main.css";
-
 export { default as FilterJob } from "./components/FilterJob";
 export { default as JobCard } from "./components/JobCard";
 export * from "./utils/types";
