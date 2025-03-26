@@ -30,7 +30,7 @@ A shared job filtering component library built for Next.js projects. It includes
 
     Configure your dependency and add:
     ```bash
-    "dependencies": {
+    "devDependencies": {
     "shared-components": "git+https://github.com/MHCAviation/shared_components.git#main"
     // ... other dependencies
     }
