@@ -102,7 +102,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
   return (
     <div className="mt-4">
       {/* Search Input */}
-      <div className="sticky top-16 py-6 bg-white">
+      <div className="sticky top-20 py-6 bg-white">
         <div className="flex flex-col gap-2">
           <input
             type="text"
@@ -126,7 +126,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
 
       <div className="flex flex-col lg:flex-row my-4 gap-4">
         {/* Filters */}
-        <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-44 lg:top-48 bg-white">
+        <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-44 lg:top-52 bg-white">
           <h3 className="text-lg font-medium mb-2">Filter by Aircraft Type</h3>
           <div className="flex lg:flex-col gap-4 flex-wrap">
             {aircraftTypes.map((type) => (
