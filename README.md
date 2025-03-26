@@ -43,6 +43,9 @@ A shared job filtering component library built for Next.js projects. It includes
     import FilterJob from "shared-components/dist/FilterJob";
     import type { Job } from "shared-components/dist/utils/types";
 
+    // Example custom loading
+    const CustomLoader = () => <div>Loading, please wait...</div>;
+
     // Example job data and client IDs
     const jobs: Job[] = [
     // ... your job objects here
@@ -51,7 +54,7 @@ A shared job filtering component library built for Next.js projects. It includes
     const clientIds: number[] = [1, 2, 3];
 
     export default function JobsPage() {
-    return <FilterJob jobs={jobs} clientIds={clientIds} />;}
+    return <FilterJob jobs={jobs} clientIds={clientIds} LoadingComponent={<CustomLoader />}/>;}
     ```
 
 3. **Component Overview**
