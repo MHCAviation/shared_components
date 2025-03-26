@@ -54,7 +54,12 @@ A shared job filtering component library built for Next.js projects. It includes
     const clientIds: number[] = [1, 2, 3];
 
     export default function JobsPage() {
-    return <FilterJob jobs={jobs} clientIds={clientIds} LoadingComponent={<CustomLoader />}/>;}
+    return <FilterJob jobs={jobs} clientIds={clientIds} LoadingComponent={<CustomLoader />}/>;
+    #or if you are using ssr in the page you should add "Suspense"
+
+    <Suspense fallback={<CustomLoader />}>
+        <FilterJob jobs={jobs} clientIds={clientIds} LoadingComponent={<CustomLoader />}/>
+    </Suspense> }
     ```
 
 3. **Component Overview**
