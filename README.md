@@ -10,7 +10,7 @@ A shared job filtering component library built for Next.js projects. It includes
 - **Client Logo Integration:** Automatically fetches and displays client logos for job listings.
 - **Structured Data:** Implements JobPosting schema for enhanced SEO.
 
-## Installation
+## How to use
 
 1. **Install the Package**
 

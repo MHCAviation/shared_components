@@ -8,6 +8,7 @@ import JobCard from "./JobCard";
 interface FilterJobProps {
   jobs: Job[];
   clientIds: number[];
+  LoadingComponent?: React.ReactNode; // Optional prop for a custom loading component
 }
 
 // Extract the aircraft type from a job title
@@ -21,7 +22,7 @@ function getAircraftType(jobTitle: string): string {
   return "Other";
 }
 
-export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
+export default function FilterJob({ jobs, clientIds, LoadingComponent }: FilterJobProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -40,9 +41,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
       try {
         const results = await Promise.all(
           clientIds.map(async (clientId) => {
-            const response = await fetch(
-              `/api/client-logo?clientId=${clientId}`
-            );
+            const response = await fetch(`/api/client-logo?clientId=${clientId}`);
             if (!response.ok) return { clientId, logo: "" };
             const data = await response.json();
             return { clientId, logo: data.logo || "" };
@@ -66,15 +65,12 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set("search", searchTerm);
-    if (selectedTypes.length > 0)
-      params.set("filters", selectedTypes.join(","));
+    if (selectedTypes.length > 0) params.set("filters", selectedTypes.join(","));
     router.push(`?${params.toString()}`, { scroll: false });
   }, [searchTerm, selectedTypes, router]);
 
   // List available aircraft types
-  const aircraftTypes = Array.from(
-    new Set(jobs.map((job) => getAircraftType(job.JobTitle)))
-  );
+  const aircraftTypes = Array.from(new Set(jobs.map((job) => getAircraftType(job.JobTitle))));
 
   // Toggle a filter
   const handleCheckboxChange = (type: string) => {
@@ -93,9 +89,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
     .filter((job) =>
       searchTerm
         ? job.JobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.PublishedJobDescription.toLowerCase().includes(
-            searchTerm.toLowerCase()
-          )
+          job.PublishedJobDescription.toLowerCase().includes(searchTerm.toLowerCase())
         : true
     );
 
@@ -114,8 +108,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
           <div className="text-sm text-gray-500">
             {searchTerm ? (
               <>
-                Showing {filteredJobs.length} results for &quot;{searchTerm}
-                &quot;
+                Showing {filteredJobs.length} results for &quot;{searchTerm}&quot;
               </>
             ) : (
               `Showing ${filteredJobs.length} jobs`
@@ -126,7 +119,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
 
       <div className="flex flex-col lg:flex-row my-4 gap-4">
         {/* Filters */}
-        <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-44 lg:top-52 bg-white">
+        <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-48 lg:top-52 bg-white">
           <h3 className="text-lg font-medium mb-2">Filter by Aircraft Type</h3>
           <div className="flex lg:flex-col gap-4 flex-wrap">
             {aircraftTypes.map((type) => (
@@ -146,7 +139,7 @@ export default function FilterJob({ jobs, clientIds }: FilterJobProps) {
         {/* Job Listings */}
         {isLoading ? (
           <div className="w-full flex justify-start items-center">
-            "loading jobs..."
+            {LoadingComponent ? LoadingComponent : "loading jobs..."}
           </div>
         ) : filteredJobs.length === 0 ? (
           <div className="text-center py-8">No matching jobs found</div>
