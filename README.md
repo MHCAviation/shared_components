@@ -22,16 +22,24 @@ A shared job filtering component library built for Next.js projects. It includes
     yarn add shared-components
     ```
 
-2. **Peer Dependencies**
+2. **Peer Dependencies and Import**
 
     Ensure your project includes the following dependencies (or compatible versions):
-
     Next.js: ^14.0.0 or ^15.2.2+
-
     React: ^18.3.1 or ^19.0.0+
 
-    Example:
+    Configure your dependency and add:
     ```bash
+    "dependencies": {
+    "shared-components": "git+https://github.com/MHCAviation/shared_components.git"
+    // ... other dependencies
+    }
+    ```
+
+    Example to import:
+    ```bash
+    import { FilterJob, fetchJobs } from "shared-components";
+    #or
     import FilterJob from "shared-components/dist/FilterJob";
     import type { Job } from "shared-components/dist/utils/types";
 
