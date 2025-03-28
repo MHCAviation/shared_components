@@ -139,23 +139,27 @@ export default function FilterJob({
       </div>
 
       <div className="flex flex-col lg:flex-row my-4 gap-4">
-        {/* Filters */}
-        <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-48 lg:top-52 bg-white">
-          <h3 className="text-lg font-medium mb-2">Filter by Aircraft Type</h3>
-          <div className="flex lg:flex-col gap-4 flex-wrap">
-            {aircraftTypes.map((type) => (
-              <label key={type} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={selectedTypes.includes(type)}
-                  onChange={() => handleCheckboxChange(type)}
-                  className="form-checkbox h-4 w-4 cursor-pointer"
-                />
-                <span className="text-sm">{type}</span>
-              </label>
-            ))}
+        {/* Filters: Render only if not loading and matching jobs exist */}
+        {!isLoading && filteredJobs.length > 0 && (
+          <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-48 lg:top-52 bg-white">
+            <h3 className="text-lg font-medium mb-2">
+              Filter by Aircraft Type
+            </h3>
+            <div className="flex lg:flex-col gap-4 flex-wrap">
+              {aircraftTypes.map((type) => (
+                <label key={type} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedTypes.includes(type)}
+                    onChange={() => handleCheckboxChange(type)}
+                    className="form-checkbox h-4 w-4 cursor-pointer"
+                  />
+                  <span className="text-sm">{type}</span>
+                </label>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Job Listings */}
         {isLoading ? (
