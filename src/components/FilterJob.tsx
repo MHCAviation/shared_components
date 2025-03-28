@@ -167,7 +167,7 @@ export default function FilterJob({
             {LoadingComponent ? LoadingComponent : "loading jobs..."}
           </div>
         ) : filteredJobs.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="w-full flex justify-center items-center py-4">
             {ErrorComponent ? ErrorComponent : "No matching jobs found"}
           </div>
         ) : (
