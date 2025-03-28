@@ -167,7 +167,9 @@ export default function FilterJob({
             {LoadingComponent ? LoadingComponent : "loading jobs..."}
           </div>
         ) : filteredJobs.length === 0 ? (
-          <div className="text-center py-8">No matching jobs found</div>
+          <div className="text-center py-8">
+            {ErrorComponent ? ErrorComponent : "No matching jobs found"}
+          </div>
         ) : (
           <div className="space-y-4">
             {filteredJobs.map((job) => (
