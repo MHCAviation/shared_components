@@ -6,15 +6,15 @@ import type { Job } from "../utils/types";
 import JobCard from "./JobCard";
 
 interface FilterJobProps {
-  jobs: Job[];
+  jobs: Job[] | null;
   clientIds: number[];
   LoadingComponent?: React.ReactNode; // Optional prop for a custom loading component
+  ErrorComponent?: React.ReactNode; // Optional prop for a custom error component
 }
 
 // Extract the aircraft type from a job title
 function getAircraftType(jobTitle: string): string {
   const title = jobTitle.toLowerCase();
-
   if (title.includes("saab")) return "Saab";
   if (title.includes("atr")) return "ATR";
   if (/\bb\d{3}\b/i.test(jobTitle)) return "Boeing"; // e.g. B737, B777, etc.
@@ -22,11 +22,24 @@ function getAircraftType(jobTitle: string): string {
   return "Other";
 }
 
-export default function FilterJob({ jobs, clientIds, LoadingComponent }: FilterJobProps) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+export default function FilterJob({
+  jobs,
+  clientIds,
+  LoadingComponent,
+  ErrorComponent,
+}: FilterJobProps) {
+  // If jobs is not a valid array, render the error component or a default error message.
+  if (!jobs || !Array.isArray(jobs)) {
+    return (
+      <div className="text-center py-10">
+        {ErrorComponent ? ErrorComponent : "Sorry, no job available right now."}
+      </div>
+    );
+  }
 
   // Read initial search term and filters from URL
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const initialSearchTerm = searchParams.get("search") || "";
   const initialFilters = searchParams.get("filters")?.split(",") || [];
 
@@ -41,7 +54,9 @@ export default function FilterJob({ jobs, clientIds, LoadingComponent }: FilterJ
       try {
         const results = await Promise.all(
           clientIds.map(async (clientId) => {
-            const response = await fetch(`/api/client-logo?clientId=${clientId}`);
+            const response = await fetch(
+              `/api/client-logo?clientId=${clientId}`
+            );
             if (!response.ok) return { clientId, logo: "" };
             const data = await response.json();
             return { clientId, logo: data.logo || "" };
@@ -65,12 +80,15 @@ export default function FilterJob({ jobs, clientIds, LoadingComponent }: FilterJ
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set("search", searchTerm);
-    if (selectedTypes.length > 0) params.set("filters", selectedTypes.join(","));
+    if (selectedTypes.length > 0)
+      params.set("filters", selectedTypes.join(","));
     router.push(`?${params.toString()}`, { scroll: false });
   }, [searchTerm, selectedTypes, router]);
 
   // List available aircraft types
-  const aircraftTypes = Array.from(new Set(jobs.map((job) => getAircraftType(job.JobTitle))));
+  const aircraftTypes = Array.from(
+    new Set(jobs.map((job) => getAircraftType(job.JobTitle)))
+  );
 
   // Toggle a filter
   const handleCheckboxChange = (type: string) => {
@@ -89,7 +107,9 @@ export default function FilterJob({ jobs, clientIds, LoadingComponent }: FilterJ
     .filter((job) =>
       searchTerm
         ? job.JobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.PublishedJobDescription.toLowerCase().includes(searchTerm.toLowerCase())
+          job.PublishedJobDescription.toLowerCase().includes(
+            searchTerm.toLowerCase()
+          )
         : true
     );
 
@@ -108,7 +128,8 @@ export default function FilterJob({ jobs, clientIds, LoadingComponent }: FilterJ
           <div className="text-sm text-gray-500">
             {searchTerm ? (
               <>
-                Showing {filteredJobs.length} results for &quot;{searchTerm}&quot;
+                Showing {filteredJobs.length} results for &quot;{searchTerm}
+                &quot;
               </>
             ) : (
               `Showing ${filteredJobs.length} jobs`
