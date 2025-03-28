@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
-import { sendGTMEvent } from "@next/third-parties/google"; // Adjust import as needed
+import { sendGTMEvent } from "@next/third-parties/google";
 import type { Job } from "../utils/types";
 
 interface JobCardProps {
@@ -10,20 +10,25 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job, logoUrl }: JobCardProps) {
-  const truncateDescription = (description: string, maxLength: number) =>
-    description.length > maxLength
+  const truncateDescription = (
+    description: string | null,
+    maxLength: number
+  ) => {
+    if (!description) return "";
+    return description.length > maxLength
       ? `${description.substring(0, maxLength)}...`
       : description;
+  };
 
-  // Derive partner's company name from Category
-  const partnersCompany = `${job.Category.split(" ")[0]}`;
+  // Derive partner's company name from Category (handle if Category is missing)
+  const partnersCompany = job.Category ? job.Category.split(" ")[0] : "Company";
 
   // Schema.org JobPosting structured data
   const jobPostingSchema = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     title: job.JobTitle,
-    description: job.PublishedJobDescription,
+    description: job.PublishedJobDescription || "",
     datePosted: job.CreatedOn,
     hiringOrganization: {
       "@type": "Organization",
