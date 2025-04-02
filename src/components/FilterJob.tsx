@@ -141,7 +141,7 @@ export default function FilterJob({
       <div className="flex flex-col lg:flex-row my-4 gap-4">
         {/* Filters: Render only if not loading and matching jobs exist */}
         {!isLoading && filteredJobs.length > 0 && (
-          <div className="basis-2/5 border border-gray-200 p-4 rounded-lg max-h-fit lg:max-w-fit sticky top-48 lg:top-52 bg-white">
+          <div className="basis-2/5 border border-gray-200 p-4 rounded-lg h-auto lg:max-w-fit sticky top-48 lg:top-52 bg-white">
             <h3 className="text-lg font-medium mb-2">
               Filter by Aircraft Type
             </h3>
