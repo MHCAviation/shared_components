@@ -23,6 +23,9 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
   // Derive partner's company name from Category (handle if Category is missing)
   const partnersCompany = job.Category ? job.Category.split(" ")[0] : "Company";
 
+  const portalDomain = process.env.NEXT_PUBLIC_PORTAL_DOMAIN || "portal.first2resource.com";
+  const portalUrl = `https://${portalDomain}`;
+
   // Schema.org JobPosting structured data
   const jobPostingSchema = {
     "@context": "https://schema.org",
@@ -45,7 +48,7 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
   return (
     <>
       <Link
-        href={`https://portal.first2resource.com/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`}
+        href={`${portalUrl}/first2resource.com/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`}
         target="_blank"
         rel="noopener noreferrer"
         className="p-4 border rounded-lg mb-4 block hover:bg-gray-50 transition-colors"
