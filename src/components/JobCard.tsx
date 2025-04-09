@@ -48,7 +48,7 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
   return (
     <>
       <Link
-        href={`${portalUrl}/first2resource.com/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`}
+        href={`${portalUrl}/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`}
         target="_blank"
         rel="noopener noreferrer"
         className="p-4 border rounded-lg mb-4 block hover:bg-gray-50 transition-colors"
