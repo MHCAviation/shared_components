@@ -54,7 +54,7 @@ const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
   return createPortal(
     <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/40 blur-lg z-50" />
+      <div className="fixed inset-0 bg-blue-950/40 blur-lg z-50" />
       {/* Popup */}
       <div className="fixed top-1/2 left-1/2 z-50 w-[95vw] max-w-md rounded-2xl bg-white shadow-2xl transform -translate-x-1/2 -translate-y-1/2 animate-fadein flex flex-col items-center p-0">
         <div className="flex flex-col items-center w-full px-8 pt-10 pb-8">
