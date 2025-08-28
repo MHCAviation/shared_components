@@ -4,9 +4,10 @@ import lottie from "lottie-web";
 interface LottieLinkedInIconProps {
   style?: React.CSSProperties;
   className?: string;
+  lottieUrl?: string;
 }
 
-const LottieLinkedInIcon: React.FC<LottieLinkedInIconProps> = ({ style, className }) => {
+const LottieLinkedInIcon: React.FC<LottieLinkedInIconProps> = ({ style, className, lottieUrl }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -14,9 +15,8 @@ const LottieLinkedInIcon: React.FC<LottieLinkedInIconProps> = ({ style, classNam
     let isMounted = true;
     const load = async () => {
       try {
-        const response = await fetch(
-          "https://lottie.host/8b2b5d27-6a81-46a7-addc-6244b32eccbc/Yz9Adwfnfx.json"
-        );
+        const url = lottieUrl || "https://lottie.host/8b2b5d27-6a81-46a7-addc-6244b32eccbc/Yz9Adwfnfx.json";
+        const response = await fetch(url);
         const animationData = await response.json();
         if (containerRef.current && isMounted) {
           animation = lottie.loadAnimation({
@@ -36,7 +36,7 @@ const LottieLinkedInIcon: React.FC<LottieLinkedInIconProps> = ({ style, classNam
       isMounted = false;
       if (animation) animation.destroy();
     };
-  }, []);
+  }, [lottieUrl]);
 
   return <div ref={containerRef} style={style} className={className} />;
 };

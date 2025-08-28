@@ -4,7 +4,23 @@ import Link from "next/link";
 import LottieLinkedInIcon from "./LottieLinkedInIcon";
 import { createPortal } from "react-dom";
 
-const LinkedInPopup: React.FC = () => {
+interface LinkedInPopupProps {
+  headline?: React.ReactNode;
+  addMeText?: string;
+  addMeUrl?: string;
+  onConnect?: () => void;
+  declineText?: string;
+  lottieUrl?: string;
+}
+
+const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
+  headline = (<><span>Are you missing out on our insider updates?<br />Join <b>3,000+ professionals</b> already connected with us on LinkedIn</span></>),
+  addMeText = "Yes, Add Me 🚀",
+  addMeUrl = "https://www.linkedin.com/company/mhcaviation/",
+  onConnect,
+  declineText = "No, I'll risk missing out",
+  lottieUrl,
+}) => {
   const [mounted, setMounted] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -18,8 +34,13 @@ const LinkedInPopup: React.FC = () => {
     }
   }, []);
 
+
   const handleConnect = () => {
-    window.open("https://www.linkedin.com/company/mhcaviation/", "_blank");
+    if (onConnect) {
+      onConnect();
+    } else {
+      window.open(addMeUrl, "_blank");
+    }
     localStorage.setItem("mhc_linkedin_popup_dismissed", "true");
     setShow(false);
   };
@@ -33,35 +54,32 @@ const LinkedInPopup: React.FC = () => {
   return createPortal(
     <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/40 z-50" />
+      <div className="fixed inset-0 bg-black/40 blur-lg z-50" />
       {/* Popup */}
-      <div className="fixed top-1/2 left-1/2 z-50 min-w-[340px] max-w-[95vw] rounded-2xl bg-white shadow-2xl transform -translate-x-1/2 -translate-y-1/2 animate-fadein">
-        <div className="flex flex-row items-center p-8 pb-6">
-          <div className="w-20 h-20 mr-6 flex items-center justify-center">
-            <LottieLinkedInIcon className="w-20 h-20" />
+      <div className="fixed top-1/2 left-1/2 z-50 w-[95vw] max-w-md rounded-2xl bg-white shadow-2xl transform -translate-x-1/2 -translate-y-1/2 animate-fadein flex flex-col items-center p-0">
+        <div className="flex flex-col items-center w-full px-8 pt-10 pb-8">
+          <div className="w-36 h-36 rounded-full border-8 border-[#2d2e5e]/10 flex items-center justify-center mb-8 bg-white">
+            <LottieLinkedInIcon className="w-28 h-28" lottieUrl={lottieUrl} />
           </div>
-          <div className="flex-1">
-            <p className="text-lg font-medium mb-4 text-[#0077b5]">
-              Are you missing out on our insider updates?<br />
-              Join <b>3,000+ professionals</b> already connected with us on LinkedIn
-            </p>
-            <div className="flex gap-3">
-              <Link
-                className="bg-[#0077b5] hover:bg-[#005983] text-white rounded-md px-5 py-2 font-semibold text-base transition-colors duration-200 no-underline"
-                href="https://www.linkedin.com/company/mhcaviation/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleConnect}
-              >
-                Yes, Add Me 🚀
-              </Link>
-              <button
-                className="border border-gray-300 rounded-md px-5 py-2 font-medium text-base text-gray-600 hover:border-[#0077b5] hover:text-[#0077b5] transition-colors duration-200"
-                onClick={handleClose}
-              >
-                No, I&apos;ll risk missing out
-              </button>
-            </div>
+          <p className="text-center text-base text-black mb-8">
+            {headline}
+          </p>
+          <div className="flex flex-col gap-3 w-full">
+            <Link
+              className="w-full bg-[#377dff] hover:bg-[#2d5fd7] text-white rounded-md px-5 py-3 font-semibold text-base transition-colors duration-200 no-underline text-center border-2 border-[#377dff]"
+              href={addMeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleConnect}
+            >
+              {addMeText}
+            </Link>
+            <button
+              className="w-full border-2 border-[#377dff] rounded-md px-5 py-3 font-medium text-base text-[#377dff] bg-white hover:bg-[#f5f8ff] transition-colors duration-200 text-center"
+              onClick={handleClose}
+            >
+              {declineText}
+            </button>
           </div>
         </div>
       </div>
