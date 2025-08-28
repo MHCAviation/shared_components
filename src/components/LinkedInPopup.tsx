@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
+import Image from "next/image";
 import LottieLinkedInIcon from "./LottieLinkedInIcon";
 import { createPortal } from "react-dom";
 
@@ -11,6 +12,7 @@ interface LinkedInPopupProps {
   onConnect?: () => void;
   declineText?: string;
   lottieUrl?: string;
+  imageUrl?: string;
 }
 
 const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
@@ -20,6 +22,7 @@ const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
   onConnect,
   declineText = "No, I'll risk missing out",
   lottieUrl,
+  imageUrl,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [show, setShow] = useState(false);
@@ -54,12 +57,16 @@ const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
   return createPortal(
     <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-blue-950/40 blur-lg z-50" />
+  <div className="fixed inset-0 bg-blue-950/80 backdrop-blur-[16px] z-50" />
       {/* Popup */}
       <div className="fixed top-1/2 left-1/2 z-50 w-[95vw] max-w-md rounded-2xl bg-white shadow-2xl transform -translate-x-1/2 -translate-y-1/2 animate-fadein flex flex-col items-center p-0">
         <div className="flex flex-col items-center w-full px-8 pt-10 pb-8">
-          <div className="w-36 h-36 rounded-full border-8 border-[#2d2e5e]/10 flex items-center justify-center mb-8 bg-white">
-            <LottieLinkedInIcon className="w-28 h-28" lottieUrl={lottieUrl} />
+          <div className="w-36 h-36 rounded-full border-8 border-[#2d2e5e]/10 flex items-center justify-center mb-8 bg-white overflow-hidden">
+            {imageUrl ? (
+              <Image src={imageUrl} alt="Popup Icon" className="w-28 h-28 object-contain" />
+            ) : (
+              <LottieLinkedInIcon className="w-28 h-28" lottieUrl={lottieUrl} />
+            )}
           </div>
           <p className="text-center text-base text-black mb-8">
             {headline}
