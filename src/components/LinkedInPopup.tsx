@@ -13,6 +13,8 @@ interface LinkedInPopupProps {
   declineText?: string;
   lottieUrl?: string;
   imageUrl?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
 const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
@@ -23,6 +25,8 @@ const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
   declineText = "No, I'll risk missing out",
   lottieUrl,
   imageUrl,
+  imageWidth = 112,
+  imageHeight = 112,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [show, setShow] = useState(false);
@@ -63,7 +67,7 @@ const LinkedInPopup: React.FC<LinkedInPopupProps> = ({
         <div className="flex flex-col items-center w-full px-8 pt-10 pb-8">
           <div className="w-36 h-36 rounded-full border-8 border-[#2d2e5e]/10 flex items-center justify-center mb-8 bg-white overflow-hidden">
             {imageUrl ? (
-              <Image src={imageUrl} alt="Popup Icon" className="w-28 h-28 object-contain" />
+              <Image src={imageUrl} alt="Popup Icon" width={imageWidth} height={imageHeight} className="object-contain" />
             ) : (
               <LottieLinkedInIcon className="w-28 h-28" lottieUrl={lottieUrl} />
             )}
