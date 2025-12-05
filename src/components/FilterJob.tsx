@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { Job } from "../utils/types";
 import JobCard from "./JobCard";
@@ -20,6 +20,16 @@ function getAircraftType(jobTitle: string): string {
   if (/\bb\d{3}\b/i.test(jobTitle)) return "Boeing"; // e.g. B737, B777, etc.
   if (/\ba\d{3}\b/i.test(jobTitle)) return "Airbus"; // e.g. A320, A330, etc.
   return "Other";
+}
+
+function sortJobsByClient(jobs: Job[]) {
+    return [...jobs].sort((job1, job2) => {
+        if (job1.ClientId !== job2.ClientId) {
+            return job1.ClientId - job2.ClientId;
+        }
+
+        return new Date(job2.StartDate).getTime() - new Date(job1.StartDate).getTime();
+    })
 }
 
 export default function FilterJob({
@@ -113,6 +123,8 @@ export default function FilterJob({
         : true
     );
 
+  const displayJobs = useMemo(() => sortJobsByClient(filteredJobs), [filteredJobs]);
+
   return (
     <div className="mt-4">
       {/* Search Input */}
@@ -172,7 +184,7 @@ export default function FilterJob({
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredJobs.map((job) => (
+            {displayJobs.map((job) => (
               <JobCard
                 key={job.JobId}
                 job={job}
