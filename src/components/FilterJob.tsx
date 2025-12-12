@@ -109,12 +109,12 @@ export default function FilterJob({
 
   // Filter jobs based on the criteria
   const filteredJobs = jobs
-    .filter(
+    ?.filter(
       (job) =>
         selectedTypes.length === 0 ||
         selectedTypes.includes(getAircraftType(job.JobTitle))
     )
-    .filter((job) =>
+    ?.filter((job) =>
       searchTerm
         ? job.JobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
           job.PublishedJobDescription.toLowerCase().includes(
