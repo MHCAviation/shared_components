@@ -32,6 +32,12 @@ function sortJobsByClient(jobs: Job[]) {
     })
 }
 
+function sortJobsByOpenApplication(jobs: Job[]) {
+    return [...jobs].sort((job1, job2) => {
+        return +job1.JobRefNo.startsWith("OR") - +job2.JobRefNo.startsWith("OR");
+    });
+}
+
 export default function FilterJob({
   jobs,
   clientIds,
@@ -123,7 +129,9 @@ export default function FilterJob({
         : true
     );
 
-  const displayJobs = useMemo(() => sortJobsByClient(filteredJobs), [filteredJobs]);
+  const displayJobs = useMemo(() => {
+      return sortJobsByOpenApplication(sortJobsByClient(filteredJobs));
+  }, [filteredJobs]);
 
   return (
     <div className="mt-4">
