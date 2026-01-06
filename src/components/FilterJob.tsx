@@ -8,6 +8,7 @@ import JobCard from "./JobCard";
 interface FilterJobProps {
   jobs: Job[] | null;
   clientIds: number[];
+  customSort?: (jobs: Job[]) => Job[],
   LoadingComponent?: React.ReactNode; // Optional prop for a custom loading component
   ErrorComponent?: React.ReactNode; // Optional prop for a custom error component
 }
@@ -41,6 +42,7 @@ function sortJobsByOpenApplication(jobs: Job[]) {
 export default function FilterJob({
   jobs,
   clientIds,
+  customSort,
   LoadingComponent,
   ErrorComponent,
 }: FilterJobProps) {
@@ -130,7 +132,11 @@ export default function FilterJob({
     );
 
   const displayJobs = useMemo(() => {
-      return sortJobsByOpenApplication(sortJobsByClient(filteredJobs));
+      const defaultSortedJobs = sortJobsByOpenApplication(sortJobsByClient(filteredJobs));
+      if (customSort) {
+          return customSort(defaultSortedJobs);
+      }
+      return defaultSortedJobs;
   }, [filteredJobs]);
 
   return (
