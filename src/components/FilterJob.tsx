@@ -5,10 +5,12 @@ import { useSearchParams, useRouter } from "next/navigation";
 import type { Job } from "../utils/types";
 import JobCard from "./JobCard";
 
+type SortStrategy = "F2R" | "default";
+
 interface FilterJobProps {
   jobs: Job[] | null;
   clientIds: number[];
-  customSort?: (jobs: Job[]) => Job[],
+  sortStrategy?: SortStrategy,
   LoadingComponent?: React.ReactNode; // Optional prop for a custom loading component
   ErrorComponent?: React.ReactNode; // Optional prop for a custom error component
 }
@@ -39,10 +41,75 @@ function sortJobsByOpenApplication(jobs: Job[]) {
     });
 }
 
+function defaultSorting(jobs: Job[]) {
+    return sortJobsByOpenApplication(sortJobsByClient(jobs));
+}
+
+function f2rSorting(jobs: Job[]) {
+    return [...jobs].sort((job1, job2) => {
+        const priorityJob1 = CLIENT_ID_PRIORITY_MAP.get(job1.ClientId);
+        const priorityJob2 = CLIENT_ID_PRIORITY_MAP.get(job2.ClientId);
+        const startDateJob1 = new Date(job1.StartDate);
+        const startDateJob2 = new Date(job2.StartDate);
+
+        if (priorityJob1 && priorityJob2) {
+            if (priorityJob1 !== priorityJob2) {
+                return priorityJob1 - priorityJob2;
+            }
+
+            return startDateJob2.getTime() - startDateJob1.getTime();
+        }
+
+        if (priorityJob1) {
+            return -1
+        }
+
+        if (priorityJob2) {
+            return 1;
+        }
+
+        return startDateJob2.getTime() - startDateJob1.getTime();
+    });
+}
+
+const sorters: Record<SortStrategy, (jobs: Job[]) => Job[]> = {
+    "F2R": f2rSorting,
+    "default": defaultSorting,
+};
+
+const CLIENT_ID_PRIORITY_ORDER: number[] = [
+    28068,
+    41411,
+    21791,
+    14129,
+    36255,
+    40835,
+    12927,
+    13719,
+    16196,
+    436,
+] as const;
+
+const CLIENT_ID_PRIORITY_MAP = new Map(CLIENT_ID_PRIORITY_ORDER.map((id, i) => [id, i]));
+/*
+1. vietnam = 28068
+2. sunexpress = 41411
+3. electra = 21791
+4. heston = 14129
+5. airbaltic = 36255
+6. B737 Engineers
+7. Airest = 12927
+8. Fleet = 13719
+9. airline support baltic = 16196
+10. avion = 436
+11. openjobs
+
+ */
+
 export default function FilterJob({
   jobs,
   clientIds,
-  customSort,
+  sortStrategy = "default",
   LoadingComponent,
   ErrorComponent,
 }: FilterJobProps) {
@@ -132,11 +199,8 @@ export default function FilterJob({
     );
 
   const displayJobs = useMemo(() => {
-      const defaultSortedJobs = sortJobsByOpenApplication(sortJobsByClient(filteredJobs));
-      if (customSort) {
-          return customSort(defaultSortedJobs);
-      }
-      return defaultSortedJobs;
+      const sortingMethod = sorters[sortStrategy];
+      return sortingMethod(filteredJobs);
   }, [filteredJobs]);
 
   return (
