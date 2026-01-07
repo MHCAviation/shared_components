@@ -52,7 +52,9 @@ function f2rSorting(jobs: Job[]) {
         const startDateJob1 = new Date(job1.StartDate);
         const startDateJob2 = new Date(job2.StartDate);
 
-        if (priorityJob1 && priorityJob2) {
+        // explicit check for undefined since jobs index will be 0 not 1
+        // we could map priorities to i + 1 but this will work fine as well I guess
+        if (priorityJob1 !== undefined && priorityJob2 !== undefined) {
             if (priorityJob1 !== priorityJob2) {
                 return priorityJob1 - priorityJob2;
             }
@@ -60,11 +62,11 @@ function f2rSorting(jobs: Job[]) {
             return startDateJob2.getTime() - startDateJob1.getTime();
         }
 
-        if (priorityJob1) {
+        if (priorityJob1 !== undefined) {
             return -1
         }
 
-        if (priorityJob2) {
+        if (priorityJob2 !== undefined) {
             return 1;
         }
 
