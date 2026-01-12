@@ -132,36 +132,14 @@ export default function FilterJob({
 
   const [selectedTypes, setSelectedTypes] = useState<string[]>(initialFilters);
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [logos, setLogos] = useState<Record<number, string>>({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Fetch client logos
-  useEffect(() => {
-    const fetchLogos = async () => {
-      try {
-        const results = await Promise.all(
-          clientIds.map(async (clientId) => {
-            const response = await fetch(
-              `/api/client-logo?clientId=${clientId}`
-            );
-            if (!response.ok) return { clientId, logo: "" };
-            const data = await response.json();
-            return { clientId, logo: data.logo || "" };
-          })
-        );
-        const logoMap = results.reduce((acc, { clientId, logo }) => {
-          acc[clientId] = logo;
-          return acc;
-        }, {} as Record<number, string>);
-        setLogos(logoMap);
-      } catch (error) {
-        console.error("Error fetching logos:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchLogos();
-  }, [clientIds]);
+  const clientLogoBaseUrl =
+    "https://hiportal.eu/Secure/api/Job/GetClientLogoFromDb";
+  const logos = useMemo(() => {
+    return clientIds.reduce((acc, clientId) => {
+      acc[clientId] = `${clientLogoBaseUrl}?clientId=${clientId}`;
+      return acc;
+    }, {} as Record<number, string>);
+  }, [clientIds, clientLogoBaseUrl]);
 
   // Update URL when search term or filters change
   useEffect(() => {
@@ -232,7 +210,7 @@ export default function FilterJob({
 
       <div className="flex flex-col lg:flex-row my-4 gap-4">
         {/* Filters: Render only if not loading and matching jobs exist */}
-        {!isLoading && filteredJobs.length > 0 && (
+        {filteredJobs.length > 0 && (
           <div className="basis-2/5 border border-gray-200 p-4 rounded-lg h-min lg:max-w-fit sticky top-48 lg:top-52 bg-white">
             <h3 className="text-lg font-medium mb-2">
               Filter by Aircraft Type
@@ -254,21 +232,18 @@ export default function FilterJob({
         )}
 
         {/* Job Listings */}
-        {isLoading ? (
-          <div className="w-full flex justify-start items-center">
-            {LoadingComponent ? LoadingComponent : "loading jobs..."}
-          </div>
-        ) : filteredJobs.length === 0 ? (
+        {filteredJobs.length === 0 ? (
           <div className="w-full flex justify-center items-center py-4">
             {ErrorComponent ? ErrorComponent : "No matching jobs found"}
           </div>
         ) : (
           <div className="space-y-4">
-            {displayJobs.map((job) => (
+            {displayJobs.map((job, index) => (
               <JobCard
                 key={job.JobId}
                 job={job}
                 logoUrl={logos[job.ClientId] || ""}
+                logoPriority={index < 2}
               />
             ))}
           </div>

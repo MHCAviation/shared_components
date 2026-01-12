@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -7,9 +6,10 @@ import type { Job } from "../utils/types";
 interface JobCardProps {
   job: Job;
   logoUrl: string;
+  logoPriority?: boolean;
 }
 
-export default function JobCard({ job, logoUrl }: JobCardProps) {
+export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   const truncateDescription = (
     description: string | null,
     maxLength: number
@@ -22,9 +22,12 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
 
   // Derive partner's company name from Category (handle if Category is missing)
   const partnersCompany = job.Category ? job.Category.split(" ")[0] : "Company";
+  const clientName = job.ClientName || partnersCompany;
+  const logoAlt = `${clientName} logo image`;
 
   const portalDomain = process.env.NEXT_PUBLIC_PORTAL_DOMAIN || "portal.first2resource.com";
   const portalUrl = `https://${portalDomain}`;
+  const jobUrl = `${portalUrl}/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`;
 
   // Schema.org JobPosting structured data
   const jobPostingSchema = {
@@ -33,22 +36,28 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
     title: job.JobTitle,
     description: job.PublishedJobDescription || "",
     datePosted: job.CreatedOn,
+    validThrough: job.StatusDate || job.StartDate || job.CreatedOn,
+    employmentType: job.EmploymentType?.toUpperCase(),
     hiringOrganization: {
       "@type": "Organization",
-      name: partnersCompany,
-      logo: logoUrl,
+      name: clientName,
+      ...(job.Company ? { sameAs: job.Company } : {}),
+      ...(logoUrl ? { logo: logoUrl } : {}),
     },
-    employmentType: job.EmploymentType,
-    jobLocation: {
-      "@type": "Place",
-      address: job.JobLocation || "Global",
+    identifier: {
+      "@type": "PropertyValue",
+      name: "JobRefNo",
+      value: job.JobRefNo,
     },
+    directApply: true,
+    industry: "Aviation",
+    url: jobUrl,
   };
 
   return (
     <>
       <Link
-        href={`${portalUrl}/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`}
+        href={jobUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="p-4 border rounded-lg mb-4 block hover:bg-gray-50 transition-colors"
@@ -62,15 +71,18 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
       >
         <div className="flex md:flex-row flex-col space-x-4 gap-4">
           {logoUrl && (
-            <Image
+            <img
               src={logoUrl}
-              alt={partnersCompany}
+              alt={logoAlt}
               width={120}
               height={64}
+              loading={logoPriority ? "eager" : "lazy"}
+              fetchPriority={logoPriority ? "high" : "auto"}
               className="object-contain p-2 border rounded-lg bg-white"
             />
           )}
           <div className="flex flex-col gap-2 m-0">
+            <p className="text-sm text-gray-600">{clientName}</p>
             <h2 className="font-medium text-2xl">{job.JobTitle}</h2>
             <p className="text-gray-600">
               <span className="block sm:hidden">
@@ -88,7 +100,7 @@ export default function JobCard({ job, logoUrl }: JobCardProps) {
       </Link>
 
       <Script
-        id="jobPostingSchema"
+        id={`jobPostingSchema-${job.JobId}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema) }}
       />
