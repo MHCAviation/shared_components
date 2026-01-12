@@ -69,19 +69,21 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
           })
         }
       >
-        <div className="flex md:flex-row flex-col space-x-4 gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center">
           {logoUrl && (
-            <img
-              src={logoUrl}
-              alt={logoAlt}
-              width={120}
-              height={64}
-              loading={logoPriority ? "eager" : "lazy"}
-              fetchPriority={logoPriority ? "high" : "auto"}
-              className="object-contain p-2 border rounded-lg bg-white"
-            />
+            <div className="shrink-0">
+              <img
+                src={logoUrl}
+                alt={logoAlt}
+                width={120}
+                height={64}
+                loading={logoPriority ? "eager" : "lazy"}
+                fetchPriority={logoPriority ? "high" : "auto"}
+                className="h-auto w-full max-w-[160px] object-contain rounded-lg border bg-white p-2 md:h-24 md:w-24 md:max-w-none"
+              />
+            </div>
           )}
-          <div className="flex flex-col gap-2 m-0">
+          <div className="flex flex-col gap-2 md:flex-1">
             <p className="text-sm text-gray-600">{clientName}</p>
             <h2 className="font-medium text-2xl">{job.JobTitle}</h2>
             <p className="text-gray-600">
@@ -95,6 +97,14 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
                 {truncateDescription(job.PublishedJobDescription, 200)}
               </span>
             </p>
+          </div>
+          <div className="w-full md:w-auto md:pl-4">
+            <button
+              type="button"
+              className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 md:w-auto"
+            >
+              Apply
+            </button>
           </div>
         </div>
       </Link>
