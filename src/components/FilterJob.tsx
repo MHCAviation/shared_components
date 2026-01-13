@@ -212,9 +212,9 @@ export default function FilterJob({
         {/* Filters: Render only if not loading and matching jobs exist */}
         {filteredJobs.length > 0 && (
           <div className="basis-2/5 border border-gray-200 p-4 rounded-lg h-min lg:max-w-fit sticky top-48 lg:top-52 bg-white">
-            <h3 className="text-lg font-medium mb-2">
+            <h2 className="text-lg font-medium mb-2">
               Filter by Aircraft Type
-            </h3>
+            </h2>
             <div className="flex lg:flex-col gap-4 flex-wrap">
               {aircraftTypes.map((type) => (
                 <label key={type} className="flex items-center space-x-2">
