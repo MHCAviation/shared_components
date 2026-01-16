@@ -9,6 +9,26 @@ interface JobCardProps {
   logoPriority?: boolean;
 }
 
+const parseJobLocation = (location?: string | null) => {
+  if (!location) return null;
+
+  const cleaned = location.replace(/\s*\([^)]*\)\s*$/, "").trim();
+  if (!cleaned) return null;
+
+  const parts = cleaned
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const addressCountry = parts[parts.length - 1] || cleaned;
+  const addressLocality = parts.length > 1 ? parts.slice(0, -1).join(", ") : "";
+
+  return {
+    name: cleaned,
+    addressCountry,
+    addressLocality: addressLocality || undefined,
+  };
+};
+
 export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   const truncateDescription = (
     description: string | null,
@@ -35,6 +55,7 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   const jobUrl = `${jobSlugBase}/${jobSlug}`;
   const applyUrl = `${portalUrl}/Secure/Membership/Registration/RegisterLead.aspx?JobId=${job.JobId}`;
   const cardHref = hasJobPages ? jobUrl : applyUrl;
+  const parsedLocation = parseJobLocation(job.Location);
 
   // Schema.org JobPosting structured data
   const jobPostingSchema = {
@@ -43,7 +64,6 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
     title: job.JobTitle,
     description: job.PublishedJobDescription || "",
     datePosted: job.CreatedOn,
-    validThrough: job.StatusDate || job.StartDate || job.CreatedOn,
     employmentType: job.EmploymentType?.toUpperCase(),
     hiringOrganization: {
       "@type": "Organization",
@@ -60,6 +80,20 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
     industry: "Aviation",
     url: jobUrl,
   };
+
+  if (parsedLocation) {
+    jobPostingSchema.jobLocation = {
+      "@type": "Place",
+      name: parsedLocation.name,
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: parsedLocation.addressCountry,
+        ...(parsedLocation.addressLocality
+          ? { addressLocality: parsedLocation.addressLocality }
+          : {}),
+      },
+    };
+  }
 
   return (
     <>
@@ -95,7 +129,10 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
             </div>
           )}
           <div className="flex flex-col gap-2 md:flex-1">
-            <p className="text-sm text-gray-600">{clientName}</p>
+            <p className="text-sm text-gray-600">
+              {clientName}
+              {parsedLocation?.name ? ` · ${parsedLocation.name}` : ""}
+            </p>
             <h2 className="font-medium text-2xl">{job.JobTitle}</h2>
             <p className="text-gray-600">
               <span className="block sm:hidden">
@@ -127,7 +164,7 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
         </div>
       </Link>
 
-      {!hasJobPages && (
+      {!hasJobPages && parsedLocation && (
         <Script
           id={"jobPostingSchema-" + job.JobId}
           type="application/ld+json"
