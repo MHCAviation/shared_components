@@ -58,7 +58,37 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   const parsedLocation = parseJobLocation(job.Location);
 
   // Schema.org JobPosting structured data
-  const jobPostingSchema = {
+  const jobPostingSchema: {
+    "@context": string;
+    "@type": string;
+    title: string;
+    description: string;
+    datePosted: string;
+    employmentType?: string;
+    hiringOrganization: {
+      "@type": string;
+      name: string;
+      sameAs?: string;
+      logo?: string;
+    };
+    identifier: {
+      "@type": string;
+      name: string;
+      value: string;
+    };
+    directApply: boolean;
+    industry: string;
+    url: string;
+    jobLocation?: {
+      "@type": string;
+      name: string;
+      address: {
+        "@type": string;
+        addressCountry: string;
+        addressLocality?: string;
+      };
+    };
+  } = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     title: job.JobTitle,
