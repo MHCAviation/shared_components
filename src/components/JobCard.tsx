@@ -27,7 +27,14 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
 
   const portalDomain = process.env.NEXT_PUBLIC_PORTAL_DOMAIN || "portal.first2resource.com";
   const portalUrl = `https://${portalDomain}`;
-  const jobUrl = `${portalUrl}/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`;
+  const jobSlugBase = process.env.NEXT_PUBLIC_JOBS_BASE_PATH || "/jobs";
+  const hasJobPages = process.env.NEXT_PUBLIC_HAS_JOB_PAGES === "true";
+  const jobSlug = `${job.JobTitle.toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")}-${job.JobId}`;
+  const jobUrl = `${jobSlugBase}/${jobSlug}`;
+  const applyUrl = `${portalUrl}/Secure/Membership/Registration/RegisterLead.aspx?JobId=${job.JobId}`;
+  const cardHref = hasJobPages ? jobUrl : applyUrl;
 
   // Schema.org JobPosting structured data
   const jobPostingSchema = {
@@ -57,10 +64,14 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   return (
     <>
       <Link
-        href={jobUrl}
+        href={cardHref}
         target="_blank"
-        rel="noopener noreferrer"
-        className="p-4 border rounded-lg mb-4 block hover:bg-gray-50 transition-colors"
+        rel={
+          hasJobPages
+            ? "noopener noreferrer"
+            : "nofollow noopener noreferrer"
+        }
+        className="p-4 border border-gray-200 rounded-lg mb-4 block hover:bg-gray-50 hover:border-blue-400 transition-colors"
         onClick={() =>
           sendGTMEvent({
             event: "jobCardClick",
@@ -102,18 +113,27 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
             <button
               type="button"
               className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 md:w-auto"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (typeof window !== "undefined") {
+                  window.open(applyUrl, "_blank", "noopener,noreferrer");
+                }
+              }}
             >
-              Apply
+              View job
             </button>
           </div>
         </div>
       </Link>
 
-      <Script
-        id={`jobPostingSchema-${job.JobId}`}
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema) }}
-      />
+      {!hasJobPages && (
+        <Script
+          id={"jobPostingSchema-" + job.JobId}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema) }}
+        />
+      )}
     </>
   );
 }
