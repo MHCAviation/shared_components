@@ -2,32 +2,13 @@ import Link from "next/link";
 import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
 import type { Job } from "../utils/types";
+import { parseJobLocation } from "../utils/jobLocation";
 
 interface JobCardProps {
   job: Job;
   logoUrl: string;
   logoPriority?: boolean;
 }
-
-const parseJobLocation = (location?: string | null) => {
-  if (!location) return null;
-
-  const cleaned = location.replace(/\s*\([^)]*\)\s*$/, "").trim();
-  if (!cleaned) return null;
-
-  const parts = cleaned
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean);
-  const addressCountry = parts[parts.length - 1] || cleaned;
-  const addressLocality = parts.length > 1 ? parts.slice(0, -1).join(", ") : "";
-
-  return {
-    name: cleaned,
-    addressCountry,
-    addressLocality: addressLocality || undefined,
-  };
-};
 
 export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   const truncateDescription = (
@@ -114,7 +95,6 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   if (parsedLocation) {
     jobPostingSchema.jobLocation = {
       "@type": "Place",
-      name: parsedLocation.name,
       address: {
         "@type": "PostalAddress",
         addressCountry: parsedLocation.addressCountry,
