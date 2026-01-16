@@ -95,6 +95,7 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
   if (parsedLocation) {
     jobPostingSchema.jobLocation = {
       "@type": "Place",
+      name: parsedLocation.name,
       address: {
         "@type": "PostalAddress",
         addressCountry: parsedLocation.addressCountry,
