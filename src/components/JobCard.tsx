@@ -34,8 +34,10 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "")}-${job.JobId}`;
   const jobUrl = `${jobSlugBase}/${jobSlug}`;
+  const jobDetailsUrl = `${portalUrl}/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`;
   const applyUrl = `${portalUrl}/Secure/Membership/Registration/RegisterLead.aspx?JobId=${job.JobId}`;
-  const cardHref = hasJobPages ? jobUrl : applyUrl;
+  const cardHref = hasJobPages ? jobUrl : jobDetailsUrl;
+  const viewJobUrl = hasJobPages ? applyUrl : jobDetailsUrl;
   const parsedLocation = parseJobLocation(job.Location);
 
   // Schema.org JobPosting structured data
@@ -165,7 +167,7 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
                 event.preventDefault();
                 event.stopPropagation();
                 if (typeof window !== "undefined") {
-                  window.open(applyUrl, "_blank", "noopener,noreferrer");
+                  window.open(viewJobUrl, "_blank", "noopener,noreferrer");
                 }
               }}
             >
