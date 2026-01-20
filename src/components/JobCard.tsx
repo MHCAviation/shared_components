@@ -35,9 +35,7 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
     .replace(/(^-|-$)/g, "")}-${job.JobId}`;
   const jobUrl = `${jobSlugBase}/${jobSlug}`;
   const jobDetailsUrl = `${portalUrl}/Secure/Membership/Registration/JobDetails.aspx?JobId=${job.JobId}`;
-  const applyUrl = `${portalUrl}/Secure/Membership/Registration/RegisterLead.aspx?JobId=${job.JobId}`;
   const cardHref = hasJobPages ? jobUrl : jobDetailsUrl;
-  const viewJobUrl = hasJobPages ? applyUrl : jobDetailsUrl;
   const parsedLocation = parseJobLocation(job.Location);
 
   // Schema.org JobPosting structured data
@@ -160,19 +158,9 @@ export default function JobCard({ job, logoUrl, logoPriority }: JobCardProps) {
             </p>
           </div>
           <div className="w-full md:w-auto md:pl-4">
-            <button
-              type="button"
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 md:w-auto"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                if (typeof window !== "undefined") {
-                  window.open(viewJobUrl, "_blank", "noopener,noreferrer");
-                }
-              }}
-            >
+            <span className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 md:w-auto inline-block text-center">
               View job
-            </button>
+            </span>
           </div>
         </div>
       </Link>
